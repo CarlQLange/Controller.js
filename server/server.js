@@ -1,13 +1,5 @@
 (function() {
-  var after, child, childs, every, io, parent, parents;
-
-  after = function(ms, func) {
-    return setTimeout(func, ms);
-  };
-
-  every = function(ms, func) {
-    return setInterval(func, ms);
-  };
+  var child, childs, io, parent, parents;
 
   io = require('socket.io').listen(1338);
 
@@ -27,7 +19,7 @@
       console.log('registered child');
       childs[msg] = socket;
       return childs[msg].on('evt', function(evt) {
-        console.log("event!!");
+        console.log(parents);
         return parents[msg].emit('evt', evt);
       });
     });

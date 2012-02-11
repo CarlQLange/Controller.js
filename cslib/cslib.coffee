@@ -21,6 +21,16 @@ every 300, ->
 	console.log "another 300 seconds!"
 ###
 
+times = (n, fn) ->
+	while n
+		fn()
+		n--
+
+###
+times 6, ->
+	console.log "called six times!"
+###
+
 once = (exp, fn) ->
 	if exp()
 		fn()
@@ -66,6 +76,11 @@ console.log(
 )
 ###
 
+String::startsWith = (s) ->
+	this[...s.length] == s
+
+String::endsWith = (s) -> 
+	this[this.length-s.length...] == s
 
 
 ###############

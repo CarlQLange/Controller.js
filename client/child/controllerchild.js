@@ -3,7 +3,7 @@
 */
 
 (function() {
-  var G;
+  var G, stripevent;
 
   G = window;
 
@@ -15,13 +15,8 @@
     G.socket = io.connect('http://127.0.0.1:1338');
     G.socket.emit('child', parentid);
     $("#cnv").on('mousedown', function(evt) {
-      var evtsend;
-      evtsend = {
-        x: evt.offsetX,
-        y: evt.offsetY,
-        type: 'mousedown'
-      };
-      return G.socket.emit('evt', evtsend);
+      stripevent(evt);
+      return G.socket.emit('evt', stripevent(evt));
     });
     $("#cnv").on('mousemove', function(evt) {
       var evtsend;
@@ -32,7 +27,7 @@
       };
       return G.socket.emit('evt', evtsend);
     });
-    return $("#cnv").on('touchmove', function(evt) {
+    $("#cnv").on('touchmove', function(evt) {
       var evtsend, touch;
       event.preventDefault();
       if (evt.originalEvent.touches.length === 1) {
@@ -42,9 +37,34 @@
           y: touch.pageY,
           type: 'touchmove'
         };
+        return G.socket.emit('evt', evtsend);
       }
+    });
+    return $("#cnv").on('ondevicemotion', function(evt) {
+      var evtsend;
+      evtsend = {
+        accelerationIncludingGravity: {
+          x: evt.accelerationIncludingGravity.x,
+          y: evt.accelerationIncludingGravity.y,
+          z: evt.accelerationIncludingGravity.z
+        },
+        rotation: evt.rotationRate
+      };
       return G.socket.emit('evt', evtsend);
     });
   });
+
+  stripevent = function(evt) {
+    var key, ret, value, _ref;
+    ret = {};
+    _ref = evt.originalEvent;
+    for (key in _ref) {
+      value = _ref[key];
+      if (typeof value !== 'function' && !key.endsWith('Element') && !key.endsWith('arget') && key !== 'view') {
+        ret[key] = value;
+      }
+    }
+    return JSON.stringify(ret);
+  };
 
 }).call(this);
