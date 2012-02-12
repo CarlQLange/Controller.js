@@ -1,5 +1,5 @@
 (function() {
-  var child, childs, io, parent, parents;
+  var after, child, childs, io, once, parent, parents;
 
   io = require('socket.io').listen(1338);
 
@@ -17,7 +17,11 @@
       parents[id] = socket;
       cb(id);
       return parents[id].on('regevt', function(type) {
-        return childs[id].emit('regevt', type);
+        return once((function() {
+          return id in childs;
+        }), function() {
+          return childs[id].emit('regevt', type);
+        });
       });
     });
     socket.on('child', function(msg) {
@@ -31,5 +35,19 @@
       return console.log(msg);
     });
   });
+
+  after = function(ms, fn) {
+    return setTimeout(fn, ms);
+  };
+
+  once = function(exp, fn) {
+    if (exp()) {
+      return fn();
+    } else {
+      return after(1000, function() {
+        return once(exp, fn);
+      });
+    }
+  };
 
 }).call(this);

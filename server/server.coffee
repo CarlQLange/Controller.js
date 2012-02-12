@@ -13,7 +13,8 @@ io.sockets.on 'connection', (socket) ->
 		parents[id] = socket
 		cb(id)
 		parents[id].on 'regevt', (type) ->
-			childs[id].emit 'regevt', type
+			once (-> (id of childs)), ->
+				childs[id].emit 'regevt', type
 
 	socket.on 'child', (msg) ->
 		console.log 'registered child'
@@ -23,3 +24,12 @@ io.sockets.on 'connection', (socket) ->
 
 	socket.on 'log', (msg) ->
 		console.log msg
+
+after = (ms, fn) ->
+	setTimeout(fn, ms)
+	
+once = (exp, fn) ->
+	if exp()
+		fn()
+	else
+		after 1000, -> once(exp, fn)
