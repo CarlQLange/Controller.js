@@ -11,7 +11,8 @@ class G.Controller
 		G.socket = io.connect 'http://127.0.0.1:1338' # !!
 		G.socket.emit 'log', 'connected parent'
 		G.socket.emit 'parent', '', (msg) =>
-			alert(msg)
+			@id = msg
+			alert(@id)
 
 		G.socket.on 'evt', (msg) =>
 			@_on(msg)
@@ -20,6 +21,7 @@ class G.Controller
 
 	on: (type, callback) ->
 		@callbacks[type] = callback
+		G.socket.emit 'regevt', type
 
 	_on: (evt) ->
 		evt = JSON.parse(evt)

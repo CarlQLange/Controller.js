@@ -17,7 +17,8 @@
       G.socket = io.connect('http://127.0.0.1:1338');
       G.socket.emit('log', 'connected parent');
       G.socket.emit('parent', '', function(msg) {
-        return alert(msg);
+        _this.id = msg;
+        return alert(_this.id);
       });
       G.socket.on('evt', function(msg) {
         return _this._on(msg);
@@ -26,7 +27,8 @@
     }
 
     Controller.prototype.on = function(type, callback) {
-      return this.callbacks[type] = callback;
+      this.callbacks[type] = callback;
+      return G.socket.emit('regevt', type);
     };
 
     Controller.prototype._on = function(evt) {

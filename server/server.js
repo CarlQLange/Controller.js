@@ -11,9 +11,14 @@
 
   io.sockets.on('connection', function(socket) {
     socket.on('parent', function(name, cb) {
+      var id;
       console.log('registered parent');
-      parents[(socket.id.toString()).slice(12)] = socket;
-      return cb((socket.id.toString()).slice(12));
+      id = socket.id.toString().slice(12);
+      parents[id] = socket;
+      cb(id);
+      return parents[id].on('regevt', function(type) {
+        return childs[id].emit('regevt', type);
+      });
     });
     socket.on('child', function(msg) {
       console.log('registered child');

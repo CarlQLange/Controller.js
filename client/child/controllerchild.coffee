@@ -9,23 +9,13 @@ $ ->
 	parentid = document.URL.split("?id=")[1].split("/")[0] #bad? oh well.
 
 	G.socket = io.connect 'http://127.0.0.1:1338' # !!
-	#G.socket.emit 'log', 'connected child'
 	G.socket.emit 'child', parentid
-	
-	## need to replace these by getting the server
-	## to tell the child what events to send up.
-	$("#cnv").on 'mousedown', (evt) ->
-		G.socket.emit 'evt', stripevent evt
 
-	$("#cnv").on 'mousemove', (evt) ->
-		G.socket.emit 'evt', stripevent evt
-
-	$("#cnv").on 'touchmove', (evt) ->
-		G.socket.emit 'evt', stripevent evt
-
-	# I suspect this doesn't work but I can't check it right now
-	$("#cnv").on 'ondevicemotion', (evt) ->
-		G.socket.emit 'evt', stripevent
+	G.socket.on 'regevt', (evtname) ->
+		#add a handler for that event.
+		#should this be on cnv or on window?
+		$("#cnv").on evtname, (evt) ->
+			G.socket.emit 'evt', stripevent(evt)
 
 # this is a function to strip event object of cyclical refs and functions
 # so that it jsonifies well.

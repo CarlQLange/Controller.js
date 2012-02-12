@@ -9,8 +9,11 @@ io.sockets.on 'connection', (socket) ->
 
 	socket.on 'parent', (name, cb) ->
 		console.log 'registered parent'
-		parents[(socket.id.toString())[12..]] = socket
-		cb((socket.id.toString())[12..])
+		id = socket.id.toString()[12..]
+		parents[id] = socket
+		cb(id)
+		parents[id].on 'regevt', (type) ->
+			childs[id].emit 'regevt', type
 
 	socket.on 'child', (msg) ->
 		console.log 'registered child'
