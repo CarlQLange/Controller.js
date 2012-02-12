@@ -19,7 +19,6 @@
       console.log('registered child');
       childs[msg] = socket;
       return childs[msg].on('evt', function(evt) {
-        console.log(parents);
         return parents[msg].emit('evt', evt);
       });
     });

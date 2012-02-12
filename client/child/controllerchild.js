@@ -15,30 +15,25 @@
     G.socket = io.connect('http://127.0.0.1:1338');
     G.socket.emit('child', parentid);
     $("#cnv").on('mousedown', function(evt) {
-      stripevent(evt);
       return G.socket.emit('evt', stripevent(evt));
     });
     $("#cnv").on('mousemove', function(evt) {
-      var evtsend;
-      evtsend = {
-        x: evt.offsetX,
-        y: evt.offsetY,
-        type: 'mousemove'
-      };
-      return G.socket.emit('evt', evtsend);
+      return G.socket.emit('evt', stripevent(evt));
     });
     $("#cnv").on('touchmove', function(evt) {
-      var evtsend, touch;
-      event.preventDefault();
-      if (evt.originalEvent.touches.length === 1) {
-        touch = evt.originalEvent.touches[0];
-        evtsend = {
-          x: touch.pageX,
-          y: touch.pageY,
-          type: 'touchmove'
-        };
-        return G.socket.emit('evt', evtsend);
-      }
+      /*
+      		#G.socket.emit 'log', 'touchmove on child'
+      		event.preventDefault() #stop rubber-band scrolling on iOS
+      		if evt.originalEvent.touches.length == 1
+      			touch = evt.originalEvent.touches[0]
+      			evtsend = {
+      				x: touch.pageX,
+      				y: touch.pageY,
+      				type: 'touchmove'
+      			}
+      
+      			G.socket.emit 'evt', evtsend
+      */
     });
     return $("#cnv").on('ondevicemotion', function(evt) {
       var evtsend;

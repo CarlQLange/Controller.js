@@ -1,42 +1,47 @@
 G = window
 
-###
-drawDot = (x, y, cnv=G.mainCanvas) ->
-	cnv.beginPath()
-	cnv.moveTo x, y
-	cnv.lineTo x+2, y+2
-	cnv.closePath()
-	cnv.stroke()
-###
-
 G.gravity = {
 	x:0
 	y:9.81
 }
 
-
-class PlayerDot
-	constructor: (@color="#F00", @width=10, @height=10) ->
-
-
-class EnemyDot
-	constructor: (@position={x:50, y:50},  @velocity={x:0, y:0}, @width=10, @height=10, @color="#000") ->
+class Snowflake
+	constructor: (@position={x:50,y:50},@velocity={x:0,y:0},@size={w:3,h:3},@color="#DDD",@maxvel={x:100,y:100}) ->
 	update: (t) ->
 		#javascript y u no operator overloading?
+		#am I doing something wrong here? who cares?
+
+		#stop the particles moving stupidly fast
+		if Math.abs(@velocity.x) > @maxvel.x
+			if @velocity.x < 0 then @velocity.x = -@maxvel.x
+			else @velocity.x = @maxvel.x
+		if Math.abs(@velocity.y) > @maxvel.y
+			if @velocity.y < 0 then @velocity.y = -@maxvel.y
+			else @velocity.y = @maxvel.y
+
 
 		if @velocity.x != 0
 			@position.x += (@velocity.x * t) + 0.5 * (G.gravity.x * (t * t))
 		if @velocity.y != 0
 			@position.y += (@velocity.y * t) + 0.5 * (G.gravity.y * (t * t))
-		
+
+
 		@velocity.x = @velocity.x + (G.gravity.x * t)
 		@velocity.y = @velocity.y + (G.gravity.y * t)
+
+		#wrap around
+		if @position.x > G.mainCanvas.canvas.clientWidth then @position.x = 0
+		if @position.y > G.mainCanvas.canvas.clientHeight then @position.y = 0
+		if @position.x < 0 then @position.x = G.mainCanvas.canvas.clientWidth
+		if @position.y < 0 then@position.y = G.mainCanvas.canvas.clientHeight
 
 	draw: (cnv=G.mainCanvas) ->
 		cnv.strokeStyle = @color
 		cnv.beginPath()
 		cnv.moveTo @position.x, @position.y
-		cnv.lineTo @position.x+2, @position.y+2
+		cnv.lineTo @position.x, @position.y+@size.h
+		cnv.lineTo @position.x+@size.w, @position.y+@size.h
+		cnv.lineTo @position.x+@size.w, @position.y
 		cnv.closePath()
 		cnv.stroke()
 
@@ -46,32 +51,30 @@ $ ->
 	G.mainCanvas = document.getElementById("cnv").getContext('2d')
 	G.mainCanvas.strokeStyle = "#F00"
 
-	dots = []
+	flakes = []
 	times 20, ->
-		dots.push(new EnemyDot(position={x:Math.random()*1000, y:Math.random()*1000}))
+		flakes.push(new Snowflake(position={
+			x:Math.random()*1000,  #fix these
+			y:Math.random()*1000
+		}))
 
+		###here be magic###
 	iPhone = new Controller()
-	###
-	iPhone.on 'mousemove', (evt) ->
-		drawDot(evt.x, evt.y)
-	###
 	iPhone.on 'mousedown', (evt) ->
-		drawDot(evt.x, evt.y)
-	###
-	iPhone.on 'touchmove', (evt) ->
-		drawDot(evt.x, evt.y)
-	###
-
+		flakes.push(new Snowflake(position={x:evt.x, y:evt.y}))
 
 	gameloop = ->
-		G.mainCanvas.clearRect(0,0,1000,1000)
+		G.mainCanvas.fillStyle = "#4040C3"
+		G.mainCanvas.fillRect(
+			0,0,G.mainCanvas.canvas.clientWidth,G.mainCanvas.canvas.clientHeight
+		)
 
-		(dot.update(0.025) for dot in dots) #need to fix the time (0.025??)
-		(dot.draw() for dot in dots)
+		(flake.update(0.025) for flake in flakes) #need to fix the time
+		(flake.draw() for flake in flakes)
 		webkitRequestAnimationFrame(gameloop) #should use a shim for this
 
 	gameloop()
 
-G.rotateworld = (rads) ->
+G.rotateworld = (rads) -> #global so I can access it from the webkit console
 	G.gravity.x = Math.sin(rads) * 9.81
 	G.gravity.y = Math.cos(rads) * 9.81

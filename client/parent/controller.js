@@ -14,7 +14,6 @@
 
     function Controller() {
       var _this = this;
-      console.log("constructed controller");
       G.socket = io.connect('http://127.0.0.1:1338');
       G.socket.emit('log', 'connected parent');
       G.socket.emit('parent', '', function(msg) {
@@ -31,7 +30,8 @@
     };
 
     Controller.prototype._on = function(evt) {
-      return this.callbacks[evt.type](evt);
+      evt = JSON.parse(evt);
+      if (evt.type in this.callbacks) return this.callbacks[evt.type](evt);
     };
 
     return Controller;

@@ -1,37 +1,16 @@
 (function() {
-  var EnemyDot, G, PlayerDot;
+  var G, Snowflake;
 
   G = window;
-
-  /*
-  drawDot = (x, y, cnv=G.mainCanvas) ->
-  	cnv.beginPath()
-  	cnv.moveTo x, y
-  	cnv.lineTo x+2, y+2
-  	cnv.closePath()
-  	cnv.stroke()
-  */
 
   G.gravity = {
     x: 0,
     y: 9.81
   };
 
-  PlayerDot = (function() {
+  Snowflake = (function() {
 
-    function PlayerDot(color, width, height) {
-      this.color = color != null ? color : "#F00";
-      this.width = width != null ? width : 10;
-      this.height = height != null ? height : 10;
-    }
-
-    return PlayerDot;
-
-  })();
-
-  EnemyDot = (function() {
-
-    function EnemyDot(position, velocity, width, height, color) {
+    function Snowflake(position, velocity, size, color, maxvel) {
       this.position = position != null ? position : {
         x: 50,
         y: 50
@@ -40,12 +19,32 @@
         x: 0,
         y: 0
       };
-      this.width = width != null ? width : 10;
-      this.height = height != null ? height : 10;
-      this.color = color != null ? color : "#000";
+      this.size = size != null ? size : {
+        w: 3,
+        h: 3
+      };
+      this.color = color != null ? color : "#DDD";
+      this.maxvel = maxvel != null ? maxvel : {
+        x: 100,
+        y: 100
+      };
     }
 
-    EnemyDot.prototype.update = function(t) {
+    Snowflake.prototype.update = function(t) {
+      if (Math.abs(this.velocity.x) > this.maxvel.x) {
+        if (this.velocity.x < 0) {
+          this.velocity.x = -this.maxvel.x;
+        } else {
+          this.velocity.x = this.maxvel.x;
+        }
+      }
+      if (Math.abs(this.velocity.y) > this.maxvel.y) {
+        if (this.velocity.y < 0) {
+          this.velocity.y = -this.maxvel.y;
+        } else {
+          this.velocity.y = this.maxvel.y;
+        }
+      }
       if (this.velocity.x !== 0) {
         this.position.x += (this.velocity.x * t) + 0.5 * (G.gravity.x * (t * t));
       }
@@ -53,59 +52,66 @@
         this.position.y += (this.velocity.y * t) + 0.5 * (G.gravity.y * (t * t));
       }
       this.velocity.x = this.velocity.x + (G.gravity.x * t);
-      return this.velocity.y = this.velocity.y + (G.gravity.y * t);
+      this.velocity.y = this.velocity.y + (G.gravity.y * t);
+      if (this.position.x > G.mainCanvas.canvas.clientWidth) this.position.x = 0;
+      if (this.position.y > G.mainCanvas.canvas.clientHeight) this.position.y = 0;
+      if (this.position.x < 0) this.position.x = G.mainCanvas.canvas.clientWidth;
+      if (this.position.y < 0) {
+        return this.position.y = G.mainCanvas.canvas.clientHeight;
+      }
     };
 
-    EnemyDot.prototype.draw = function(cnv) {
+    Snowflake.prototype.draw = function(cnv) {
       if (cnv == null) cnv = G.mainCanvas;
       cnv.strokeStyle = this.color;
       cnv.beginPath();
       cnv.moveTo(this.position.x, this.position.y);
-      cnv.lineTo(this.position.x + 2, this.position.y + 2);
+      cnv.lineTo(this.position.x, this.position.y + this.size.h);
+      cnv.lineTo(this.position.x + this.size.w, this.position.y + this.size.h);
+      cnv.lineTo(this.position.x + this.size.w, this.position.y);
       cnv.closePath();
       return cnv.stroke();
     };
 
-    return EnemyDot;
+    return Snowflake;
 
   })();
 
   $(function() {
-    var dots, gameloop, iPhone;
+    var flakes, gameloop, iPhone;
     $("#cnv").attr('width', window.innerWidth);
     $("#cnv").attr('height', window.innerHeight);
     G.mainCanvas = document.getElementById("cnv").getContext('2d');
     G.mainCanvas.strokeStyle = "#F00";
-    dots = [];
+    flakes = [];
     times(20, function() {
       var position;
-      return dots.push(new EnemyDot(position = {
+      return flakes.push(new Snowflake(position = {
         x: Math.random() * 1000,
         y: Math.random() * 1000
       }));
+      /*here be magic
+      */
     });
     iPhone = new Controller();
-    /*
-    	iPhone.on 'mousemove', (evt) ->
-    		drawDot(evt.x, evt.y)
-    */
     iPhone.on('mousedown', function(evt) {
-      return drawDot(evt.x, evt.y);
+      var position;
+      return flakes.push(new Snowflake(position = {
+        x: evt.x,
+        y: evt.y
+      }));
     });
-    /*
-    	iPhone.on 'touchmove', (evt) ->
-    		drawDot(evt.x, evt.y)
-    */
     gameloop = function() {
-      var dot, _i, _j, _len, _len2;
-      G.mainCanvas.clearRect(0, 0, 1000, 1000);
-      for (_i = 0, _len = dots.length; _i < _len; _i++) {
-        dot = dots[_i];
-        dot.update(0.025);
+      var flake, _i, _j, _len, _len2;
+      G.mainCanvas.fillStyle = "#4040C3";
+      G.mainCanvas.fillRect(0, 0, G.mainCanvas.canvas.clientWidth, G.mainCanvas.canvas.clientHeight);
+      for (_i = 0, _len = flakes.length; _i < _len; _i++) {
+        flake = flakes[_i];
+        flake.update(0.025);
       }
-      for (_j = 0, _len2 = dots.length; _j < _len2; _j++) {
-        dot = dots[_j];
-        dot.draw();
+      for (_j = 0, _len2 = flakes.length; _j < _len2; _j++) {
+        flake = flakes[_j];
+        flake.draw();
       }
       return webkitRequestAnimationFrame(gameloop);
     };
