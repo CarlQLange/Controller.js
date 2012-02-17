@@ -32,8 +32,13 @@
     };
 
     Controller.prototype._on = function(evt) {
-      evt = JSON.parse(evt);
-      if (evt.type in this.callbacks) return this.callbacks[evt.type](evt);
+      try {
+        evt = JSON.parse(evt);
+        if (evt.type in this.callbacks) return this.callbacks[evt.type](evt);
+      } catch (error) {
+        console.log("Couldn't parse event. stripevent didn't work properly!");
+        return G.socket.emit('log', "Couldn't parse event.");
+      }
     };
 
     return Controller;

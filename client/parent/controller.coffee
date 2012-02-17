@@ -12,6 +12,8 @@ class G.Controller
 		G.socket.emit 'log', 'connected parent'
 		G.socket.emit 'parent', '', (msg) =>
 			@id = msg
+			#I really need to sort out a nicer way
+			# to connect controllers...
 			alert(@id)
 
 		G.socket.on 'evt', (msg) =>
@@ -24,6 +26,12 @@ class G.Controller
 		G.socket.emit 'regevt', type
 
 	_on: (evt) ->
-		evt = JSON.parse(evt)
-		#if we don't have a callback for that event, screw it
-		if (evt.type of @callbacks) then @callbacks[evt.type](evt)
+		try
+			evt = JSON.parse(evt)
+			#if we don't have a callback for that event, screw it
+			if (evt.type of @callbacks) then @callbacks[evt.type](evt)
+		catch error
+			console.log("""
+				Couldn't parse event. stripevent didn't work properly!
+			""")
+			G.socket.emit 'log', "Couldn't parse event."

@@ -56,9 +56,8 @@
       if (this.position.x > G.mainCanvas.canvas.clientWidth) this.position.x = 0;
       if (this.position.y > G.mainCanvas.canvas.clientHeight) this.position.y = 0;
       if (this.position.x < 0) this.position.x = G.mainCanvas.canvas.clientWidth;
-      if (this.position.y < 0) {
-        return this.position.y = G.mainCanvas.canvas.clientHeight;
-      }
+      if (this.position.y < 0) this.position.y = G.mainCanvas.canvas.clientHeight;
+      return this;
     };
 
     Snowflake.prototype.draw = function(cnv) {
@@ -70,7 +69,8 @@
       cnv.lineTo(this.position.x + this.size.w, this.position.y + this.size.h);
       cnv.lineTo(this.position.x + this.size.w, this.position.y);
       cnv.closePath();
-      return cnv.stroke();
+      cnv.stroke();
+      return this;
     };
 
     return Snowflake;
@@ -78,7 +78,7 @@
   })();
 
   $(function() {
-    var flakes, gameloop, iPhone;
+    var controller, flakes, gameloop;
     $("#cnv").attr('width', window.innerWidth);
     $("#cnv").attr('height', window.innerHeight);
     G.mainCanvas = document.getElementById("cnv").getContext('2d');
@@ -93,25 +93,23 @@
       /*here be magic
       */
     });
-    iPhone = new Controller();
-    iPhone.on('mousedown', function(evt) {
+    controller = new Controller();
+    controller.on('mousedown', function(evt) {
       var position;
       return flakes.push(new Snowflake(position = {
         x: evt.x,
         y: evt.y
       }));
+      /*do you see how cool that is
+      */
     });
     gameloop = function() {
-      var flake, _i, _j, _len, _len2;
+      var flake, _i, _len;
       G.mainCanvas.fillStyle = "#4040C3";
       G.mainCanvas.fillRect(0, 0, G.mainCanvas.canvas.clientWidth, G.mainCanvas.canvas.clientHeight);
       for (_i = 0, _len = flakes.length; _i < _len; _i++) {
         flake = flakes[_i];
-        flake.update(0.025);
-      }
-      for (_j = 0, _len2 = flakes.length; _j < _len2; _j++) {
-        flake = flakes[_j];
-        flake.draw();
+        flake.update(0.025).draw();
       }
       return webkitRequestAnimationFrame(gameloop);
     };

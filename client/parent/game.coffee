@@ -9,7 +9,7 @@ class Snowflake
 	constructor: (@position={x:50,y:50},@velocity={x:0,y:0},@size={w:3,h:3},@color="#DDD",@maxvel={x:100,y:100}) ->
 	update: (t) ->
 		#javascript y u no operator overloading?
-		#am I doing something wrong here? who cares?
+		#am I doing something wrong here? whatever bro
 
 		#stop the particles moving stupidly fast
 		if Math.abs(@velocity.x) > @maxvel.x
@@ -33,7 +33,9 @@ class Snowflake
 		if @position.x > G.mainCanvas.canvas.clientWidth then @position.x = 0
 		if @position.y > G.mainCanvas.canvas.clientHeight then @position.y = 0
 		if @position.x < 0 then @position.x = G.mainCanvas.canvas.clientWidth
-		if @position.y < 0 then@position.y = G.mainCanvas.canvas.clientHeight
+		if @position.y < 0 then @position.y = G.mainCanvas.canvas.clientHeight
+		
+		return @
 
 	draw: (cnv=G.mainCanvas) ->
 		cnv.strokeStyle = @color
@@ -45,6 +47,8 @@ class Snowflake
 		cnv.closePath()
 		cnv.stroke()
 
+		return @
+
 $ ->
 	$("#cnv").attr('width', window.innerWidth)
 	$("#cnv").attr('height', window.innerHeight)
@@ -54,23 +58,25 @@ $ ->
 	flakes = []
 	times 20, ->
 		flakes.push(new Snowflake(position={
-			x:Math.random()*1000,  #fix these
+			x:Math.random()*1000  #fix these
 			y:Math.random()*1000
 		}))
 
 		###here be magic###
-	iPhone = new Controller()
-	iPhone.on 'mousedown', (evt) ->
+	controller = new Controller()
+	controller.on 'mousedown', (evt) ->
 		flakes.push(new Snowflake(position={x:evt.x, y:evt.y}))
+		###do you see how cool that is###
 
+	
 	gameloop = ->
 		G.mainCanvas.fillStyle = "#4040C3"
 		G.mainCanvas.fillRect(
 			0,0,G.mainCanvas.canvas.clientWidth,G.mainCanvas.canvas.clientHeight
 		)
 
-		(flake.update(0.025) for flake in flakes) #need to fix the time
-		(flake.draw() for flake in flakes)
+		(flake.update(0.025).draw() for flake in flakes) #need to fix the time
+		
 		webkitRequestAnimationFrame(gameloop) #should use a shim for this
 
 	gameloop()

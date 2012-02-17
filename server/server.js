@@ -1,9 +1,25 @@
+
+/*
+This is super-simple! All this server does is relate the parents
+and the children.
+
+It's got a dict of parents, and a dict of children. The keys in
+both are just ids - a child of a parent will have the parent's
+id as its key.
+
+When a parent emits 'regevt', its children get told to handle
+whetever event type gets passed down along.
+Then, whenever that event type happens on the child, the stripped
+event is passed up to the parent.
+
+When any socket emits 'log', the server will log a message. This
+is for debug purposes only, and it probably shouldn't exist.
+*/
+
 (function() {
-  var after, child, childs, io, once, parent, parents;
+  var after, childs, io, once, parents;
 
   io = require('socket.io').listen(1338);
-
-  parent = child = null;
 
   parents = {};
 
@@ -24,7 +40,11 @@
         });
       });
     });
-    socket.on('child', function(msg) {
+    socket.on('child', function(msg, err) {
+      if (!(msg in parents)) {
+        err();
+        return;
+      }
       console.log('registered child');
       childs[msg] = socket;
       return childs[msg].on('evt', function(evt) {
