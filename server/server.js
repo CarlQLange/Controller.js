@@ -17,7 +17,9 @@ is for debug purposes only, and it probably shouldn't exist.
 */
 
 (function() {
-  var after, childs, io, once, parents;
+  var childs, io, parents;
+
+  eval(require('fs').readFileSync('../client/cslib.js') + '');
 
   io = require('socket.io').listen(1338);
 
@@ -52,19 +54,5 @@ is for debug purposes only, and it probably shouldn't exist.
       return console.log(msg);
     });
   });
-
-  after = function(ms, fn) {
-    return setTimeout(fn, ms);
-  };
-
-  once = function(exp, fn) {
-    if (exp()) {
-      return fn();
-    } else {
-      return after(1000, function() {
-        return once(exp, fn);
-      });
-    }
-  };
 
 }).call(this);

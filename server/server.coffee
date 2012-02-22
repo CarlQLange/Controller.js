@@ -16,6 +16,10 @@ is for debug purposes only, and it probably shouldn't exist.
 
 ###
 
+#super hacky way to do this, need to use modules eventually
+#include cslib.js
+eval(require('fs').readFileSync('../client/cslib.js')+'');
+
 io = require('socket.io').listen(1338)
 
 parents = {}
@@ -52,14 +56,3 @@ io.sockets.on 'connection', (socket) ->
 
 	socket.on 'log', (msg) ->
 		console.log msg
-
-#really need to figure out the module crap so I can just
-# require cslib
-after = (ms, fn) ->
-	setTimeout(fn, ms)
-
-once = (exp, fn) ->
-	if exp()
-		fn()
-	else
-		after 1000, -> once(exp, fn)
