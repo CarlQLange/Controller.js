@@ -2,13 +2,16 @@
 
 G = window
 
-$ ->
-	G.socket = io.connect 'http://169.254.138.118:1338' # !!
+window.onload = () ->
+	G.socket = io.connect 'http://127.0.0.1:1338' # !!
 
-	$('#enterid').click (evt) ->
-		$('#enterid').fadeOut()
-		$('#idinput').fadeOut()
-		run $('#idinput').val()
+	enterbutton = document.querySelector('#enterid')
+	textfield = document.querySelector('#idinput')
+	enterbutton.addEventListener 'click', (evt) ->
+		if (textfield.value)
+			enterbutton.style.display = 'none'
+			textfield.style.display = 'none'
+			run textfield.value
 
 
 run = (parentid) ->
@@ -19,8 +22,7 @@ run = (parentid) ->
 	G.socket.on 'regevt', (evtname) ->
 		#add a handler for that event.
 		#should this be on cnv or on window?
-		console.log $(window)
-		$(window).on evtname, (evt) ->
+		document.addEventListener evtname, (evt) ->
 			console.log evt
 			G.socket.emit 'evt', stripevent(evt)
 

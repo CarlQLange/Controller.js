@@ -7,21 +7,25 @@
 
   G = window;
 
-  $(function() {
-    G.socket = io.connect('http://169.254.138.118:1338');
-    return $('#enterid').click(function(evt) {
-      $('#enterid').fadeOut();
-      $('#idinput').fadeOut();
-      return run($('#idinput').val());
+  window.onload = function() {
+    var enterbutton, textfield;
+    G.socket = io.connect('http://127.0.0.1:1338');
+    enterbutton = document.querySelector('#enterid');
+    textfield = document.querySelector('#idinput');
+    return enterbutton.addEventListener('click', function(evt) {
+      if (textfield.value) {
+        enterbutton.style.display = 'none';
+        textfield.style.display = 'none';
+        return run(textfield.value);
+      }
     });
-  });
+  };
 
   run = function(parentid) {
     console.log(parentid);
     G.socket.emit('child', parentid);
     return G.socket.on('regevt', function(evtname) {
-      console.log($(window));
-      return $(window).on(evtname, function(evt) {
+      return document.addEventListener(evtname, function(evt) {
         console.log(evt);
         return G.socket.emit('evt', stripevent(evt));
       });

@@ -49,9 +49,9 @@ class Snowflake
 
 		return @
 
-$ ->
-	$("#cnv").attr('width', window.innerWidth)
-	$("#cnv").attr('height', window.innerHeight)
+window.onload = ()->
+	document.querySelector("#cnv").width = window.innerWidth
+	document.querySelector("#cnv").height= window.innerHeight
 	G.mainCanvas = document.getElementById("cnv").getContext('2d')
 	G.mainCanvas.strokeStyle = "#F00"
 

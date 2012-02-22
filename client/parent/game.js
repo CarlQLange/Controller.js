@@ -77,10 +77,10 @@
 
   })();
 
-  $(function() {
+  window.onload = function() {
     var controller, flakes, gameloop;
-    $("#cnv").attr('width', window.innerWidth);
-    $("#cnv").attr('height', window.innerHeight);
+    document.querySelector("#cnv").width = window.innerWidth;
+    document.querySelector("#cnv").height = window.innerHeight;
     G.mainCanvas = document.getElementById("cnv").getContext('2d');
     G.mainCanvas.strokeStyle = "#F00";
     flakes = [];
@@ -151,7 +151,7 @@
       return webkitRequestAnimationFrame(gameloop);
     };
     return gameloop();
-  });
+  };
 
   G.rotateworld = function(rads) {
     G.gravity.x = Math.sin(rads) * 9.81;
