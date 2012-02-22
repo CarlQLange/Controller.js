@@ -62,12 +62,26 @@ $ ->
 			y:Math.random()*1000
 		}))
 
-		###here be magic###
+	###here be magic###
 	controller = new Controller()
 	controller.on 'mousedown', (evt) ->
 		flakes.push(new Snowflake(position={x:evt.x, y:evt.y}))
-		###do you see how cool that is###
+	###do you see how cool that is###
 
+	controller.on 'keydown', (evt) ->
+		if evt.keyIdentifier is "Left"
+			(flake.position.x-=8 for flake in flakes)
+		if evt.keyIdentifier is "Right"
+			(flake.position.x+=8 for flake in flakes)
+
+	controller.on 'ondeviceorientation', (evt) ->
+		if evt.rotation != null
+			b = Math.round(rotation.beta);
+
+			if b < -20
+				(flake.position.x-=8 for flake in flakes)
+			if b > 20
+				(flake.position.x+=8 for flake in flakes)
 	
 	gameloop = ->
 		G.mainCanvas.fillStyle = "#4040C3"

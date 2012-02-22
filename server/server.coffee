@@ -39,14 +39,15 @@ io.sockets.on 'connection', (socket) ->
 				childs[id].emit 'regevt', type
 
 	socket.on 'child', (msg, err) ->
-		if msg not of parents
-			err() #msg should be an id also in parents
-			return
+		#if msg not of parents
+			#err() #msg should be an id also in parents
+			#return
 
 		console.log 'registered child'
 
 		childs[msg] = socket #add the socket as a child
 		childs[msg].on 'evt', (evt) ->
+			console.log evt
 			parents[msg].emit 'evt', evt #on event, tell parent.
 
 	socket.on 'log', (msg) ->

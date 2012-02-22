@@ -90,9 +90,9 @@
         x: Math.random() * 1000,
         y: Math.random() * 1000
       }));
-      /*here be magic
-      */
     });
+    /*here be magic
+    */
     controller = new Controller();
     controller.on('mousedown', function(evt) {
       var position;
@@ -100,8 +100,45 @@
         x: evt.x,
         y: evt.y
       }));
-      /*do you see how cool that is
-      */
+    });
+    /*do you see how cool that is
+    */
+    controller.on('keydown', function(evt) {
+      var flake, _i, _j, _len, _len2, _results;
+      if (evt.keyIdentifier === "Left") {
+        for (_i = 0, _len = flakes.length; _i < _len; _i++) {
+          flake = flakes[_i];
+          flake.position.x -= 8;
+        }
+      }
+      if (evt.keyIdentifier === "Right") {
+        _results = [];
+        for (_j = 0, _len2 = flakes.length; _j < _len2; _j++) {
+          flake = flakes[_j];
+          _results.push(flake.position.x += 8);
+        }
+        return _results;
+      }
+    });
+    controller.on('ondeviceorientation', function(evt) {
+      var b, flake, _i, _j, _len, _len2, _results;
+      if (evt.rotation !== null) {
+        b = Math.round(rotation.beta);
+        if (b < -20) {
+          for (_i = 0, _len = flakes.length; _i < _len; _i++) {
+            flake = flakes[_i];
+            flake.position.x -= 8;
+          }
+        }
+        if (b > 20) {
+          _results = [];
+          for (_j = 0, _len2 = flakes.length; _j < _len2; _j++) {
+            flake = flakes[_j];
+            _results.push(flake.position.x += 8);
+          }
+          return _results;
+        }
+      }
     });
     gameloop = function() {
       var flake, _i, _len;
