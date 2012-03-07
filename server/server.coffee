@@ -51,7 +51,7 @@ io.sockets.on 'connection', (socket) ->
 
 		childs[msg] = socket #add the socket as a child
 		childs[msg].on 'evt', (evt) ->
-			console.log evt
+			#console.log evt
 			parents[msg].emit 'evt', evt #on event, tell parent.
 
 	socket.on 'log', (msg) ->

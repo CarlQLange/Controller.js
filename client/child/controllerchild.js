@@ -9,7 +9,7 @@
 
   window.onload = function() {
     var enterbutton, textfield;
-    G.socket = io.connect('http://127.0.0.1:1338');
+    G.socket = io.connect('http://192.168.1.17:1338');
     enterbutton = document.querySelector('#enterid');
     textfield = document.querySelector('#idinput');
     return enterbutton.addEventListener('click', function(evt) {
@@ -25,19 +25,17 @@
     console.log(parentid);
     G.socket.emit('child', parentid);
     return G.socket.on('regevt', function(evtname) {
-      return document.addEventListener(evtname, function(evt) {
-        console.log(evt);
+      return window.addEventListener(evtname, function(evt) {
         return G.socket.emit('evt', stripevent(evt));
       });
     });
   };
 
   stripevent = function(evt) {
-    var key, ret, value, _ref;
+    var key, ret, value;
     ret = {};
-    _ref = evt.originalEvent;
-    for (key in _ref) {
-      value = _ref[key];
+    for (key in evt) {
+      value = evt[key];
       if (typeof value !== 'function' && !key.endsWith('Element') && !key.endsWith('arget') && key !== 'view') {
         ret[key] = value;
       }

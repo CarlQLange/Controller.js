@@ -46,7 +46,6 @@ is for debug purposes only, and it probably shouldn't exist.
       console.log('registered child');
       childs[msg] = socket;
       return childs[msg].on('evt', function(evt) {
-        console.log(evt);
         return parents[msg].emit('evt', evt);
       });
     });

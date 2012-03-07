@@ -7,8 +7,8 @@
 G = window
 
 class G.Controller
-	constructor: () ->
-		G.socket = io.connect 'http://127.0.0.1:1338' # !!
+	constructor: (server='http://127.0.0.1:1338') ->
+		G.socket = io.connect server # !!
 		G.socket.emit 'log', 'connected parent'
 		G.socket.emit 'parent', '', (msg) =>
 			@id = msg
@@ -26,12 +26,13 @@ class G.Controller
 		G.socket.emit 'regevt', type
 
 	_on: (evt) ->
-		try
+		#console.log evt
+		#try
 			evt = JSON.parse(evt)
 			#if we don't have a callback for that event, screw it
 			if (evt.type of @callbacks) then @callbacks[evt.type](evt)
-		catch error
-			console.log("""
-				Couldn't parse event. stripevent didn't work properly!
-			""")
-			G.socket.emit 'log', "Couldn't parse event."
+		#catch error
+		#	console.log("""
+		#		Couldn't parse event. stripevent didn't work properly!
+		#	""")
+		#	G.socket.emit 'log', "Couldn't parse event."

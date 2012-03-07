@@ -3,7 +3,7 @@
 G = window
 
 window.onload = () ->
-	G.socket = io.connect 'http://127.0.0.1:1338' # !!
+	G.socket = io.connect 'http://192.168.1.17:1338' # !!
 
 	enterbutton = document.querySelector('#enterid')
 	textfield = document.querySelector('#idinput')
@@ -22,8 +22,9 @@ run = (parentid) ->
 	G.socket.on 'regevt', (evtname) ->
 		#add a handler for that event.
 		#should this be on cnv or on window?
-		document.addEventListener evtname, (evt) ->
-			console.log evt
+		#document.getElementById('cnv').addEventListener evtname, (evt) ->
+		window.addEventListener evtname, (evt) ->
+			#console.log evt
 			G.socket.emit 'evt', stripevent(evt)
 
 # this is a function to strip event object of cyclical refs and functions
@@ -34,7 +35,7 @@ run = (parentid) ->
 # the most common bits of the events (coords for example)
 stripevent = (evt) ->
 	ret = {}
-	for key, value of evt.originalEvent
+	for key, value of evt
 		# "No, this isn't _nearly_ hacky enough!!"
 		#also coffeescript, you seriously need to fix the
 		# bug that makes me split this if across multiple lines in an ugly way 

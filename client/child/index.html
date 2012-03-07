@@ -4,12 +4,16 @@
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<title>Controller</title>
 	<script type="text/javascript" src="../cslib.js"></script>
-	<script type="text/javascript" src="http://127.0.0.1:1338/socket.io/socket.io.js"></script>
+	<script type="text/javascript" src="http://192.168.1.17:1338/socket.io/socket.io.js"></script>
 	<script type="text/javascript" src="./controllerchild.js"></script>
 	<style>
 		html, body {
 			height: 90%;
 			overflow: hidden;
+		}
+		#cnv {
+			width: 100%;
+			height:100%;
 		}
 	</style>
 </head>
@@ -17,6 +21,6 @@
 	<h1>CHILD</h1>
 	<input type="number" id="idinput"/>
 	<button id="enterid">Connect!</button>
-	<!--<canvas id="cnv" width="500" height="500"></canvas>-->
+	<canvas id="cnv" width="500" height="500"></canvas>
 </body>
 </html>

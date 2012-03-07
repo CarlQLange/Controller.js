@@ -1,13 +1,32 @@
 <html>
 <head>
-	<title>Controller</title>
-	<script type="text/javascript" src="http://127.0.0.1:1338/socket.io/socket.io.js"></script>
+	<title>Dinosaur Angst</title>
+	<script type="text/javascript" src="http://192.168.1.17:1338/socket.io/socket.io.js"></script>
+	<script type="text/javascript" src="./jquery.js"></script>
 	<script type="text/javascript" src="../cslib.js"></script>
 	<script type="text/javascript" src="./controller.js"></script>
 	<script type="text/javascript" src="./game.js"></script>
+	<style>
+		body {
+			background-color: #000;
+		}
+		#wrap {
+			margin:auto;
+			text-align: center;
+			background-color: #111;
+			height: 100%;
+		}
+		#gamecanvas {
+			width: 1280;
+			height: 800;
+		}
+	</style>
 </head>
 <body>
-	<h1>PARENT</h1>
-	<canvas id="cnv" width="500" height="500"></canvas>
+<div id="wrap">
+	<canvas id='gamecanvas' width=1280 height=800>
+		Your browser doesn't support canvas!! Dude what it's like 2012 get with the plan already
+	</canvas>
+</div>
 </body>
 </html>

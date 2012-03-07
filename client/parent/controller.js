@@ -12,9 +12,10 @@
 
   G.Controller = (function() {
 
-    function Controller() {
+    function Controller(server) {
       var _this = this;
-      G.socket = io.connect('http://127.0.0.1:1338');
+      if (server == null) server = 'http://127.0.0.1:1338';
+      G.socket = io.connect(server);
       G.socket.emit('log', 'connected parent');
       G.socket.emit('parent', '', function(msg) {
         _this.id = msg;
@@ -32,13 +33,8 @@
     };
 
     Controller.prototype._on = function(evt) {
-      try {
-        evt = JSON.parse(evt);
-        if (evt.type in this.callbacks) return this.callbacks[evt.type](evt);
-      } catch (error) {
-        console.log("Couldn't parse event. stripevent didn't work properly!");
-        return G.socket.emit('log', "Couldn't parse event.");
-      }
+      evt = JSON.parse(evt);
+      if (evt.type in this.callbacks) return this.callbacks[evt.type](evt);
     };
 
     return Controller;
